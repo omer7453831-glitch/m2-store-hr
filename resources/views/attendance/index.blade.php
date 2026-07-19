@@ -17,105 +17,94 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
 
     <h2>
-        <i class="bi bi-calendar-check-fill"></i>
-        الحضور والانصراف
+        📅 الحضور والانصراف
     </h2>
 
     <a href="{{ route('attendance.create') }}" class="btn btn-primary">
-
-        <i class="bi bi-plus-circle"></i>
-
         تسجيل حضور
-
     </a>
 
 </div>
 
 <div class="card shadow">
 
-<div class="card-body">
+    <div class="card-body">
 
-<table class="table table-hover table-bordered align-middle">
+        <table class="table table-bordered table-hover align-middle">
 
-<thead class="table-dark">
+            <thead class="table-dark">
 
-<tr>
+                <tr>
+                    <th>#</th>
+                    <th>الموظف</th>
+                    <th>التاريخ</th>
+                    <th>الحضور</th>
+                    <th>الانصراف</th>
+                    <th>الحالة</th>
+                </tr>
 
-<th>#</th>
-<th>الموظف</th>
-<th>التاريخ</th>
-<th>الحضور</th>
-<th>الانصراف</th>
-<th>الحالة</th>
+            </thead>
 
-</tr>
+            <tbody>
 
-</thead>
+            @forelse($attendances as $attendance)
 
-<tbody>
+                <tr>
 
-@forelse($attendances as $attendance)
+                    <td>{{ $attendance->id }}</td>
 
-<tr>
+                    <td>{{ $attendance->employee->name }}</td>
 
-<td>{{ $attendance->id }}</td>
+                    <td>{{ $attendance->attendance_date }}</td>
 
-<td>{{ $attendance->employee->name }}</td>
+                    <td>{{ $attendance->check_in }}</td>
 
-<td>{{ $attendance->attendance_date }}</td>
+                    <td>{{ $attendance->check_out ?? '-' }}</td>
 
-<td>{{ $attendance->check_in }}</td>
+                    <td>
 
-<td>
+                        @if($attendance->check_out)
 
-{{ $attendance->check_out ?? '-' }}
+                            <span class="badge bg-success">
+                                تم الانصراف
+                            </span>
 
-</td>
+                        @else
 
-<td>
+                            <form action="{{ route('attendance.update', $attendance->id) }}" method="POST">
 
-@if($attendance->check_out)
+                                @csrf
+                                @method('PUT')
 
-<span class="badge bg-success">
+                                <button type="submit" class="btn btn-warning btn-sm">
+                                    تسجيل الانصراف
+                                </button>
 
-انصرف
+                            </form>
 
-</span>
+                        @endif
 
-@else
+                    </td>
 
-<a href="{{ route('attendance.edit',$attendance->id) }}"
-class="btn btn-warning btn-sm">
+                </tr>
 
-تسجيل الانصراف
+            @empty
 
-</a>
+                <tr>
 
-@endif
+                    <td colspan="6" class="text-center">
+                        لا يوجد حضور اليوم
+                    </td>
 
-</td>
+                </tr>
 
-</tr>
+            @endforelse
 
-@empty
+            </tbody>
 
-<tr>
+        </table>
 
-<td colspan="6" class="text-center">
-
-لا يوجد حضور اليوم
-
-</td>
-
-</tr>
-
-@endforelse
-
-</tbody>
-
-</table>
-
-</div>
+    </div>
 
 </div>
 

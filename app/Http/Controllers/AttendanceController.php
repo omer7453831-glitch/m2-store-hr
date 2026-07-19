@@ -54,28 +54,40 @@ class AttendanceController extends Controller
 
     public function show(string $id)
     {
-        //
+        return redirect()->route('attendance.index');
     }
 
     public function edit(string $id)
     {
-        $attendance = Attendance::findOrFail($id);
-
-        $attendance->update([
-            'check_out' => now()->format('H:i:s'),
-        ]);
-
-        return redirect()->route('attendance.index')
-            ->with('success', 'تم تسجيل الانصراف');
+        return redirect()->route('attendance.index');
     }
 
     public function update(Request $request, string $id)
     {
-        //
+        $attendance = Attendance::findOrFail($id);
+
+        // لو الموظف سجل انصراف بالفعل
+        if ($attendance->check_out != null) {
+            return redirect()->route('attendance.index')
+                ->with('error', 'تم تسجيل الانصراف بالفعل');
+        }
+
+        // تسجيل وقت الانصراف
+        $attendance->check_out = now()->format('H:i:s');
+
+        $attendance->save();
+
+        return redirect()->route('attendance.index')
+            ->with('success', 'تم تسجيل الانصراف بنجاح');
     }
 
     public function destroy(string $id)
     {
-        //
+        $attendance = Attendance::findOrFail($id);
+
+        $attendance->delete();
+
+        return redirect()->route('attendance.index')
+            ->with('success', 'تم حذف سجل الحضور');
     }
 }
